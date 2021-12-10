@@ -12,7 +12,7 @@ import {
   queryAssignedNodes,
 } from 'lit/decorators.js';
 import { styleMap } from "lit/directives/style-map.js";
-import { BOOTSTRAP_CHEVRON_LEFT, BOOTSTRAP_CHEVRON_RIGHT } from "./constants.js";
+import { AnimationTuple, SLIDE_LEFT_IN, SLIDE_LEFT_OUT, SLIDE_RIGHT_IN, SLIDE_RIGHT_OUT, BOOTSTRAP_CHEVRON_LEFT, BOOTSTRAP_CHEVRON_RIGHT } from "./constants.js";
 
 import './slide-button.js';
 
@@ -81,11 +81,7 @@ export class SimpleCarousel extends LitElement {
 
   override firstUpdated() {
     this.containerHeight = getMaxElHeight(this.slideElements);
-    this.navigateSlide();
-  }
-
-  override updated() {
-    this.navigateSlide();
+    this.initializeSlides();
   }
 
   /** Changes current slide index by offset and wraps index */
@@ -95,14 +91,40 @@ export class SimpleCarousel extends LitElement {
   }
 
   navigateToNextSlide = () => {
-    this.changeSlide(1);
+    this.navigateWithAnimation(1, SLIDE_LEFT_OUT, SLIDE_RIGHT_IN);
   }
 
   navigateToPrevSlide = () => {
-    this.changeSlide(-1);
+    this.navigateWithAnimation(-1, SLIDE_RIGHT_OUT, SLIDE_LEFT_IN);
   }
 
-  private navigateSlide() {
+  private async navigateWithAnimation(nextSlideOffset: number, leavingAnimation: AnimationTuple, enteringAnimation: AnimationTuple) {
+    const elLeaving = this.slideElements[this.slideIndex];
+    if (elLeaving.getAnimations().length > 0) {
+      return;
+    }
+    // Animate out current element.
+    const leavingAnim = elLeaving.animate(leavingAnimation[0], leavingAnimation[1]);
+
+    // Change slide
+    this.changeSlide(nextSlideOffset);
+
+    const newSlideEl = this.slideElements[this.slideIndex];
+
+    // Show the new slide
+    showSlide(newSlideEl);
+
+    // Teleport it out of view and animate it in
+    const enteringAnim = newSlideEl.animate(enteringAnimation[0], enteringAnimation[1]);
+
+    // Wait for animations
+    await Promise.all([leavingAnim.finished, enteringAnim.finished]);
+
+    // Hide the element that left
+    hideSlide(elLeaving);
+  }
+
+  private initializeSlides() {
     for (let i = 0; i < this.slideElements.length; i++) {
       if (i === this.slideIndex) {
         showSlide(this.slideElements[i]);
