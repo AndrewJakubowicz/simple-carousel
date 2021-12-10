@@ -11,6 +11,8 @@ import {
   queryAssignedNodes,
 } from 'lit/decorators.js';
 
+import './slide-button.js';
+
 @customElement('simple-carousel')
 export class SimpleCarousel extends LitElement {
   static override styles = css`
@@ -25,7 +27,18 @@ export class SimpleCarousel extends LitElement {
   @queryAssignedNodes('', false, '*') private slideElements!: HTMLElement[];
 
   override render() {
-    return html`<slot></slot>`;
+    return html`
+      <slide-button
+        @click=${this.navigateToPrevSlide}>
+        Left
+      </slide-button>
+
+      <slot></slot>
+
+      <slide-button
+        @click=${this.navigateToNextSlide}>
+        Right
+      </slide-button>`;
   }
 
   override firstUpdated() {
@@ -34,6 +47,20 @@ export class SimpleCarousel extends LitElement {
 
   override updated() {
     this.navigateSlide();
+  }
+
+  /** Changes current slide index by offset and wraps index */
+  private changeSlide(offset: number) {
+    const slideCount = this.slideElements.length;
+    this.slideIndex = (slideCount + ((this.slideIndex + offset) % slideCount)) % slideCount;
+  }
+
+  navigateToNextSlide = () => {
+    this.changeSlide(1);
+  }
+
+  navigateToPrevSlide = () => {
+    this.changeSlide(-1);
   }
 
   private navigateSlide() {
