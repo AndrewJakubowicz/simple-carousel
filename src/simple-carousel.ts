@@ -33,6 +33,7 @@ export class SimpleCarousel extends LitElement {
       display: flex;
       flex-direction: row;
       align-items: center;
+      min-width: 500px;
     }
 
     #container {
@@ -64,6 +65,7 @@ export class SimpleCarousel extends LitElement {
 
     return html`
       <slide-button
+          onClick=${this.navigateToPrevSlide}
           @click=${this.navigateToPrevSlide}>
         ${BOOTSTRAP_CHEVRON_LEFT}
       </slide-button>
@@ -74,6 +76,7 @@ export class SimpleCarousel extends LitElement {
       </div>
 
       <slide-button
+          onClick=${this.navigateToNextSlide}
           @click=${this.navigateToNextSlide}>
         ${BOOTSTRAP_CHEVRON_RIGHT}
       </slide-button>`;
