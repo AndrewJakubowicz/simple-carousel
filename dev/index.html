@@ -7,6 +7,29 @@
     <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
     <script src="../node_modules/lit/polyfill-support.js"></script>
     <script type="module" src="../simple-carousel.js"></script>
+    <style>
+      html {
+        background-color: #f4f4f4;
+      }
+
+      /** Light styles to center the component */
+      body {
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: center;
+        justify-content: center;
+      }
+
+      simple-carousel {
+        width: 50vw;
+        max-width: 600px;
+
+        --shadow: #293198;
+        --highlight: #ceffff;
+      }
+    </style>
   </head>
   <body>
     ​​<simple-carousel>
