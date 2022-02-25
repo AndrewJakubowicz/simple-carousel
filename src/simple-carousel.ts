@@ -4,15 +4,23 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-import { LitElement, html, css } from 'lit';
+import {LitElement, html, css} from 'lit';
 import {
   customElement,
   property,
   state,
   queryAssignedNodes,
 } from 'lit/decorators.js';
-import { styleMap } from "lit/directives/style-map.js";
-import { AnimationTuple, SLIDE_LEFT_IN, SLIDE_LEFT_OUT, SLIDE_RIGHT_IN, SLIDE_RIGHT_OUT, BOOTSTRAP_CHEVRON_LEFT, BOOTSTRAP_CHEVRON_RIGHT } from "./constants.js";
+import {styleMap} from 'lit/directives/style-map.js';
+import {
+  AnimationTuple,
+  SLIDE_LEFT_IN,
+  SLIDE_LEFT_OUT,
+  SLIDE_RIGHT_IN,
+  SLIDE_RIGHT_OUT,
+  BOOTSTRAP_CHEVRON_LEFT,
+  BOOTSTRAP_CHEVRON_RIGHT,
+} from './constants.js';
 
 import './slide-button.js';
 
@@ -48,36 +56,37 @@ export class SimpleCarousel extends LitElement {
       overflow: hidden;
       position: relative;
 
-      box-shadow: var(--shadow, gray) 0.3em 0.3em 0.4em, var(--highlight, white) -0.1em -0.1em 0.3em;
+      box-shadow: var(--shadow, gray) 0.3em 0.3em 0.4em,
+        var(--highlight, white) -0.1em -0.1em 0.3em;
     }
   `;
 
   @state() containerHeight = 0;
-  @property({ type: Number }) slideIndex = 0;
+  @property({type: Number}) slideIndex = 0;
 
   // In video use @queryAssignedElements()
   @queryAssignedNodes('', false, '*') private slideElements!: HTMLElement[];
 
   override render() {
     const containerStyles = {
-      height: `${this.containerHeight}px`
+      height: `${this.containerHeight}px`,
     };
 
-    return html`
-      <slide-button
-          onClick=${this.navigateToPrevSlide}
-          @click=${this.navigateToPrevSlide}>
+    return html` <slide-button
+        onClick=${this.navigateToPrevSlide}
+        @click=${this.navigateToPrevSlide}
+      >
         ${BOOTSTRAP_CHEVRON_LEFT}
       </slide-button>
 
-      <div id="container"
-        style="${styleMap(containerStyles)}">
+      <div id="container" style="${styleMap(containerStyles)}">
         <slot></slot>
       </div>
 
       <slide-button
-          onClick=${this.navigateToNextSlide}
-          @click=${this.navigateToNextSlide}>
+        onClick=${this.navigateToNextSlide}
+        @click=${this.navigateToNextSlide}
+      >
         ${BOOTSTRAP_CHEVRON_RIGHT}
       </slide-button>`;
   }
@@ -90,24 +99,32 @@ export class SimpleCarousel extends LitElement {
   /** Changes current slide index by offset and wraps index */
   private changeSlide(offset: number) {
     const slideCount = this.slideElements.length;
-    this.slideIndex = (slideCount + ((this.slideIndex + offset) % slideCount)) % slideCount;
+    this.slideIndex =
+      (slideCount + ((this.slideIndex + offset) % slideCount)) % slideCount;
   }
 
   navigateToNextSlide = () => {
     this.navigateWithAnimation(1, SLIDE_LEFT_OUT, SLIDE_RIGHT_IN);
-  }
+  };
 
   navigateToPrevSlide = () => {
     this.navigateWithAnimation(-1, SLIDE_RIGHT_OUT, SLIDE_LEFT_IN);
-  }
+  };
 
-  private async navigateWithAnimation(nextSlideOffset: number, leavingAnimation: AnimationTuple, enteringAnimation: AnimationTuple) {
+  private async navigateWithAnimation(
+    nextSlideOffset: number,
+    leavingAnimation: AnimationTuple,
+    enteringAnimation: AnimationTuple
+  ) {
     const elLeaving = this.slideElements[this.slideIndex];
     if (elLeaving.getAnimations().length > 0) {
       return;
     }
     // Animate out current element.
-    const leavingAnim = elLeaving.animate(leavingAnimation[0], leavingAnimation[1]);
+    const leavingAnim = elLeaving.animate(
+      leavingAnimation[0],
+      leavingAnimation[1]
+    );
 
     // Change slide
     this.changeSlide(nextSlideOffset);
@@ -118,7 +135,10 @@ export class SimpleCarousel extends LitElement {
     showSlide(newSlideEl);
 
     // Teleport it out of view and animate it in
-    const enteringAnim = newSlideEl.animate(enteringAnimation[0], enteringAnimation[1]);
+    const enteringAnim = newSlideEl.animate(
+      enteringAnimation[0],
+      enteringAnimation[1]
+    );
 
     // Wait for animations
     await Promise.all([leavingAnim.finished, enteringAnim.finished]);
@@ -139,7 +159,7 @@ export class SimpleCarousel extends LitElement {
 }
 
 function getMaxElHeight(els: HTMLElement[]): number {
-  return Math.max(0, ...els.map(el => el.getBoundingClientRect().height))
+  return Math.max(0, ...els.map((el) => el.getBoundingClientRect().height));
 }
 
 function hideSlide(el: HTMLElement) {
