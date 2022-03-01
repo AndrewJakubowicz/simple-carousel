@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-import {LitElement, html, css} from 'lit';
+import { LitElement, html, css } from 'lit';
 import {
   customElement,
   property,
   state,
-  queryAssignedNodes,
+  queryAssignedElements,
 } from 'lit/decorators.js';
-import {styleMap} from 'lit/directives/style-map.js';
+import { styleMap } from 'lit/directives/style-map.js';
 import {
   AnimationTuple,
   SLIDE_LEFT_IN,
@@ -62,10 +62,9 @@ export class SimpleCarousel extends LitElement {
   `;
 
   @state() containerHeight = 0;
-  @property({type: Number}) slideIndex = 0;
+  @property({ type: Number }) slideIndex = 0;
 
-  // In video use @queryAssignedElements()
-  @queryAssignedNodes('', false, '*') private slideElements!: HTMLElement[];
+  @queryAssignedElements() private slideElements!: HTMLElement[];
 
   override render() {
     const containerStyles = {
@@ -76,7 +75,7 @@ export class SimpleCarousel extends LitElement {
         onClick=${this.navigateToPrevSlide}
         @click=${this.navigateToPrevSlide}
       >
-        ${BOOTSTRAP_CHEVRON_LEFT}
+      <slot name="button-left">${BOOTSTRAP_CHEVRON_LEFT}</slot>
       </slide-button>
 
       <div id="container" style="${styleMap(containerStyles)}">
@@ -87,7 +86,7 @@ export class SimpleCarousel extends LitElement {
         onClick=${this.navigateToNextSlide}
         @click=${this.navigateToNextSlide}
       >
-        ${BOOTSTRAP_CHEVRON_RIGHT}
+      <slot name="button-right">${BOOTSTRAP_CHEVRON_RIGHT}</slot>
       </slide-button>`;
   }
 

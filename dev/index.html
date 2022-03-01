@@ -7,6 +7,7 @@
     <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
     <script src="../node_modules/lit/polyfill-support.js"></script>
     <script type="module" src="../lib/simple-carousel.js"></script>
+    <script type="module" src="../lib/custom-izer.js"></script>
     <style>
       html {
         background-color: #f4f4f4;
@@ -25,21 +26,22 @@
       simple-carousel {
         width: 50vw;
         max-width: 600px;
-
-        --shadow: #293198;
-        --highlight: #ceffff;
       }
     </style>
   </head>
   <body>
-    <simple-carousel>
-      <div>
-        <h2>Heading</h2>
-        <p>Other stuff</p>
-      </div>
-      <p>Second slide</p>
-      <div><h2>A third slide!</h2></div>
-      <div>4!!!</div>
-    </simple-carousel>
+    <custom-izer>
+      <simple-carousel>
+        <div>
+          <h2>Title 1</h2>
+          <p>Slide 1</p>
+        </div>
+        <p>Second slide</p>
+        <div><h2>3</h2></div>
+        <div>4!!!</div>
+        <h2 slot="button-left">&lt;</h2>
+        <h2 slot="button-right">></h2>
+      </simple-carousel>
+    </custom-izer>
   </body>
 </html>
