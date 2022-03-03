@@ -10,7 +10,7 @@ import {customElement} from 'lit/decorators.js';
 @customElement('slide-button')
 class SlideButton extends LitElement {
   static override styles = css`
-    #btn {
+    :host {
       width: 2em;
       height: 2em;
       cursor: pointer;
@@ -24,8 +24,8 @@ class SlideButton extends LitElement {
         var(--highlight, white) -0.1em -0.1em 0.2em;
     }
 
-    #btn:active:hover,
-    #btn:hover:active {
+    :host(:active:hover),
+    :host(:hover:active) {
       box-shadow: inset var(--shadow, gray) 0.2em 0.2em 0.4em,
         inset var(--highlight, white) -0.1em -0.1em 0.2em;
     }
@@ -37,15 +37,14 @@ class SlideButton extends LitElement {
   `;
 
   override render() {
-    return html` <div
+    return html`<slot
       id="btn"
+      part="btn"
       tabindex="0"
       role="button"
       aria-pressed="false"
       @keypress=${this.handleKeyPress}
-    >
-      <slot></slot>
-    </div>`;
+    ></slot>`;
   }
 
   handleKeyPress = () => {

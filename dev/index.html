@@ -27,9 +27,38 @@
         width: 50vw;
         max-width: 600px;
       }
+
+      simple-carousel::part(button-left) {
+        box-shadow: none;
+        width: 4em;
+        border-radius: 0;
+        border: 10px solid var(--shadow, black);
+      }
+
+      simple-carousel::part(button-left):active:hover,
+      simple-carousel::part(button-left):hover:active {
+        border: 10px solid var(--highlight, black);
+      }
+
+      simple-carousel::part(button-right) {
+        background-color: red;
+      }
     </style>
   </head>
   <body>
+    <custom-izer>
+      <simple-carousel>
+        <div>
+          <h2>Title 1</h2>
+          <p>Slide 1</p>
+        </div>
+        <p>Second slide</p>
+        <div><h2>3</h2></div>
+        <div>4!!!</div>
+        <h2 slot="button-left">&lt;</h2>
+        <h2 slot="button-right">></h2>
+      </simple-carousel>
+    </custom-izer>
     <custom-izer>
       <simple-carousel>
         <div>

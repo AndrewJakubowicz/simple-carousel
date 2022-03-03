@@ -9,7 +9,6 @@ class Customizer extends LitElement {
 
   override render() {
     return html`
-
       <slot></slot>
       <br />
       <color-picker .propertyValue=${'--shadow'} .startingValue=${'#293198'} @change-property-value=${this.changePropertyValue}></color-picker>
