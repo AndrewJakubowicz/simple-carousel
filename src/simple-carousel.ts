@@ -44,7 +44,7 @@ export class SimpleCarousel extends LitElement {
       min-width: 500px;
     }
 
-    #container {
+    #container-id {
       border-radius: 24px;
       display: flex;
       align-items: center;
@@ -72,19 +72,23 @@ export class SimpleCarousel extends LitElement {
     };
 
     return html` <slide-button
-        part="button-left"
+        part="button-left button"
+        exportparts="internalbtn : internalbtn-left"
         onClick=${this.navigateToPrevSlide}
         @click=${this.navigateToPrevSlide}
       >
         <slot name="button-left">${BOOTSTRAP_CHEVRON_LEFT}</slot>
       </slide-button>
 
-      <div id="container" style="${styleMap(containerStyles)}">
-        <slot></slot>
-      </div>
+      <slot
+        id="container-id"
+        part="container"
+        style="${styleMap(containerStyles)}"
+      ></slot>
 
       <slide-button
-        part="button-right"
+        part="button-right button"
+        exportparts="internalbtn : internalbtn-right"
         onClick=${this.navigateToNextSlide}
         @click=${this.navigateToNextSlide}
       >

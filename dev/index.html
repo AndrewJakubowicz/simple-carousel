@@ -17,10 +17,10 @@
       body {
         height: 100vh;
         overflow: hidden;
-        display: flex;
-        flex-direction: column-reverse;
-        align-items: center;
-        justify-content: center;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        justify-items: center;
       }
 
       simple-carousel {
@@ -28,49 +28,105 @@
         max-width: 600px;
       }
 
-      simple-carousel::part(button-left) {
+      #carousel-1::part(button-left) {
         box-shadow: none;
         width: 4em;
         border-radius: 0;
         border: 10px solid var(--shadow, black);
       }
 
-      simple-carousel::part(button-left):active:hover,
-      simple-carousel::part(button-left):hover:active {
+      #carousel-1::part(button-left):active:hover,
+      #carousel-1::part(button-left):hover:active {
         border: 10px solid var(--highlight, black);
       }
 
-      simple-carousel::part(button-right) {
+      #carousel-1::part(button-right) {
         background-color: red;
+      }
+
+      #carousel-1::part(container) {
+        background-color: red;
+      }
+
+      #carousel-1::part(button) {
+        background-color: pink;
+      }
+      #carousel-2::part(button) {
+        background-color: pink;
+      }
+      #carousel-2::part(internalbtn-left) {
+        font-size: 10px;
+      }
+      #carousel-2::part(internalbtn-right) {
+        font-size: 10px;
+      }
+      #carousel-2 {
+        position: relative;
+      }
+      #carousel-2::part(button-left),
+      #carousel-2::part(button-right) {
+        position: absolute;
+        z-index: 1;
+      }
+      #carousel-2::part(button-left) {
+        bottom: 0;
+        left: 0;
+      }
+      #carousel-2::part(button-right) {
+        bottom: 0;
+        right: 0;
+      }
+      #carousel-2::part(container) {
+        box-shadow: none;
+        border: 10px solid var(--highlight);
+        border-radius: 0;
+        margin: 0;
+        padding: 40px;
       }
     </style>
   </head>
   <body>
-    <custom-izer>
-      <simple-carousel>
+    <simple-carousel>
+      <div>
+        <h2>Title 1</h2>
+      </div>
+      <p>Second slide</p>
+      <h2 slot="button-left">&lt;</h2>
+      <h2 slot="button-right">></h2>
+    </simple-carousel>
+    <custom-izer
+      customizerInputs='{"--highlight": "#00ff00", "--shadow": "#0000ff"}'
+    >
+      <simple-carousel id="carousel-1">
         <div>
           <h2>Title 1</h2>
-          <p>Slide 1</p>
         </div>
         <p>Second slide</p>
-        <div><h2>3</h2></div>
-        <div>4!!!</div>
         <h2 slot="button-left">&lt;</h2>
         <h2 slot="button-right">></h2>
       </simple-carousel>
     </custom-izer>
-    <custom-izer>
-      <simple-carousel>
+
+    <custom-izer
+      customizerInputs='{"--highlight": "#ff0000", "--shadow": "#dd00dd"}'
+    >
+      <simple-carousel id="carousel-2">
         <div>
           <h2>Title 1</h2>
-          <p>Slide 1</p>
         </div>
         <p>Second slide</p>
-        <div><h2>3</h2></div>
-        <div>4!!!</div>
         <h2 slot="button-left">&lt;</h2>
         <h2 slot="button-right">></h2>
       </simple-carousel>
     </custom-izer>
+
+    <simple-carousel>
+      <div>
+        <h2>Title 1</h2>
+      </div>
+      <p>Second slide</p>
+      <h2 slot="button-left">&lt;</h2>
+      <h2 slot="button-right">></h2>
+    </simple-carousel>
   </body>
 </html>

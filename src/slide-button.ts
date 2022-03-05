@@ -39,7 +39,7 @@ class SlideButton extends LitElement {
   override render() {
     return html`<slot
       id="btn"
-      part="btn"
+      part="internalbtn"
       tabindex="0"
       role="button"
       aria-pressed="false"
