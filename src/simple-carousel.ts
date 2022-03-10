@@ -42,9 +42,10 @@ export class SimpleCarousel extends LitElement {
       flex-direction: row;
       align-items: center;
       min-width: 500px;
+      height: inherit;
     }
 
-    #container-id {
+    [part="container"] {
       border-radius: 24px;
       display: flex;
       align-items: center;
@@ -58,24 +59,31 @@ export class SimpleCarousel extends LitElement {
 
       box-shadow: var(--shadow, gray) 0.3em 0.3em 0.4em,
         var(--highlight, white) -0.1em -0.1em 0.3em;
+
+      background: var(--background-color, #edf2f7);
     }
   `;
 
   @state() containerHeight = 0;
+  @property({ type: Number }) overrideContainerHeight = 0;
   @property({type: Number}) slideIndex = 0;
 
-  @queryAssignedElements() private slideElements!: HTMLElement[];
+  @queryAssignedElements({flatten: true}) private slideElements!: HTMLElement[];
 
   override render() {
     const containerStyles = {
-      height: `${this.containerHeight}px`,
+      height: `${this.overrideContainerHeight || this.containerHeight}px`,
     };
+    const buttonMaxHeight = {
+      maxHeight: `${this.overrideContainerHeight || this.containerHeight}px`,
+    }
 
     return html` <slide-button
         part="button-left button"
         exportparts="internalbtn : internalbtn-left"
         onClick=${this.navigateToPrevSlide}
         @click=${this.navigateToPrevSlide}
+        style="${styleMap(buttonMaxHeight)}"
       >
         <slot name="button-left">${BOOTSTRAP_CHEVRON_LEFT}</slot>
       </slide-button>
@@ -91,6 +99,7 @@ export class SimpleCarousel extends LitElement {
         exportparts="internalbtn : internalbtn-right"
         onClick=${this.navigateToNextSlide}
         @click=${this.navigateToNextSlide}
+        style="${styleMap(buttonMaxHeight)}"
       >
         <slot name="button-right">${BOOTSTRAP_CHEVRON_RIGHT}</slot>
       </slide-button>`;

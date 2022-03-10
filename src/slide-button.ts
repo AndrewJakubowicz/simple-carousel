@@ -22,6 +22,8 @@ class SlideButton extends LitElement {
 
       box-shadow: var(--shadow, gray) 0.2em 0.2em 0.4em,
         var(--highlight, white) -0.1em -0.1em 0.2em;
+
+      background: var(--background-color, #edf2f7);
     }
 
     :host(:active:hover),
