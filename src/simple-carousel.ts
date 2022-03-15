@@ -45,7 +45,7 @@ export class SimpleCarousel extends LitElement {
       height: inherit;
     }
 
-    [part="container"] {
+    [part='container'] {
       border-radius: 24px;
       display: flex;
       align-items: center;
@@ -65,7 +65,7 @@ export class SimpleCarousel extends LitElement {
   `;
 
   @state() containerHeight = 0;
-  @property({ type: Number }) overrideContainerHeight = 0;
+  @property({type: Number}) overrideContainerHeight = 0;
   @property({type: Number}) slideIndex = 0;
 
   @queryAssignedElements({flatten: true}) private slideElements!: HTMLElement[];
@@ -76,7 +76,7 @@ export class SimpleCarousel extends LitElement {
     };
     const buttonMaxHeight = {
       maxHeight: `${this.overrideContainerHeight || this.containerHeight}px`,
-    }
+    };
 
     return html` <slide-button
         part="button-left button"
