@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-import { LitElement, html, css } from 'lit';
+import { LitElement, html, css, PropertyValues } from 'lit';
 import {
   customElement,
   property,
@@ -53,6 +53,7 @@ export class SimpleCarousel extends LitElement {
   `;
 
   @state() containerHeight = 0;
+  // Assume this is always a valid slide index.
   @property({ type: Number }) slideIndex = 0;
 
   // In video use @queryAssignedElements()
@@ -87,31 +88,60 @@ export class SimpleCarousel extends LitElement {
     this.initializeSlides();
   }
 
-  /** Changes current slide index by offset and wraps index */
-  private changeSlide(offset: number) {
+  override updated(changedProperties: PropertyValues<this>): void {
+    // Not covered in the video, but if you want to drive animations from the
+    // 'slideindex' attribute, we can calculate the animation in the 'updated'
+    // lifecycle callback.
+    if (changedProperties.has('slideIndex')) {
+      const oldSlideIndex = changedProperties.get('slideIndex') as number;
+      // Prevent slideIndex from going out of bounds. Clamps the index to the
+      // range: [0, this.slideElements.length)
+      const clampedIndex = this.wrapSlide(0);
+      // Figure out if the closest path to the slide is by animating left or
+      // right.
+      const halfSlideLength = Math.floor(this.slideElements.length / 2);
+      let offset =
+        ((clampedIndex - oldSlideIndex + halfSlideLength) %
+          this.slideElements.length) -
+        halfSlideLength;
+      if (offset < -halfSlideLength) {
+        offset += this.slideElements.length;
+      }
+      if (offset > 0) {
+        // Animate forwards
+        this.navigateWithAnimation(offset, SLIDE_LEFT_OUT, SLIDE_RIGHT_IN);
+      } else if (offset < 0) {
+        // Animate backwards
+        this.navigateWithAnimation(offset, SLIDE_RIGHT_OUT, SLIDE_LEFT_IN);
+      }
+    }
+  }
+
+  /** Get next slide index by offset and wraps index */
+  private wrapSlide(offset: number): number {
     const slideCount = this.slideElements.length;
-    this.slideIndex = (slideCount + ((this.slideIndex + offset) % slideCount)) % slideCount;
+    return (slideCount + ((this.slideIndex + offset) % slideCount)) % slideCount;
   }
 
   navigateToNextSlide = () => {
-    this.navigateWithAnimation(1, SLIDE_LEFT_OUT, SLIDE_RIGHT_IN);
+    // Animation driven by `updated` lifecycle.
+    this.slideIndex = this.wrapSlide(1);
   }
 
   navigateToPrevSlide = () => {
-    this.navigateWithAnimation(-1, SLIDE_RIGHT_OUT, SLIDE_LEFT_IN);
+    // Animation driven by `updated` lifecycle.
+    this.slideIndex = this.wrapSlide(-1);
   }
 
   private async navigateWithAnimation(nextSlideOffset: number, leavingAnimation: AnimationTuple, enteringAnimation: AnimationTuple) {
-    const elLeaving = this.slideElements[this.slideIndex];
-    if (elLeaving.getAnimations().length > 0) {
-      return;
-    }
+    this.initializeSlides();
+    const elLeaving = this.slideElements[this.wrapSlide(-nextSlideOffset)];
+    showSlide(elLeaving);
+
     // Animate out current element.
     const leavingAnim = elLeaving.animate(leavingAnimation[0], leavingAnimation[1]);
 
-    // Change slide
-    this.changeSlide(nextSlideOffset);
-
+    // Entering slide
     const newSlideEl = this.slideElements[this.slideIndex];
 
     // Show the new slide
@@ -120,15 +150,18 @@ export class SimpleCarousel extends LitElement {
     // Teleport it out of view and animate it in
     const enteringAnim = newSlideEl.animate(enteringAnimation[0], enteringAnimation[1]);
 
-    // Wait for animations
-    await Promise.all([leavingAnim.finished, enteringAnim.finished]);
+    try {
+      // Wait for animations
+      await Promise.all([leavingAnim.finished, enteringAnim.finished]);
 
-    // Hide the element that left
-    hideSlide(elLeaving);
+      // Hide the element that left
+      hideSlide(elLeaving);
+    } catch {/* Animation was cancelled */}
   }
 
   private initializeSlides() {
     for (let i = 0; i < this.slideElements.length; i++) {
+      this.slideElements[i].getAnimations().forEach(anim => anim.cancel())
       if (i === this.slideIndex) {
         showSlide(this.slideElements[i]);
       } else {
